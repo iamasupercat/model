@@ -1,0 +1,8 @@
+# Bolt 모드용 YAML 설정 파일
+yolo_model: ./runs/[Final]Bolt_20251201_111615_tune/iter/weights/best.pt
+
+# DINOv2 모델 경로
+# bolt: ./runs/[Final]BoltDINO_20251202_123350/weights/best.pt
+bolt: ./runs/[Final]BoltDINO_4class_20251202_123616/weights/best.pt
+
+# txt: /home/work/datasets/CODE/TXT/finaltest_Bolt.txt

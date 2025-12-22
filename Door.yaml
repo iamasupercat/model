@@ -1,0 +1,12 @@
+# Frontdoor 모드용 YAML 설정 파일
+yolo_model: ./runs/[Final]Door_20251201_201740_tune/iter/weights/best.pt
+
+# DINOv2 모델 경로들
+# high: ./runs/[Final]DoorDINO_high_2class_20251202_120038/weights/best.pt
+high: ./runs/[Final]DoorDINO_high_5class_20251202_120522/weights/best.pt
+# mid: ./runs/[Final]DoorDINO_mid_2class_20251202_204517/weights/best.pt
+mid: ./runs/[Final]DoorDINO_mid_5class_20251202_210635/weights/best.pt
+# low: ./runs/[Final]DoorDINO_low_2class_20251202_115110/weights/best.pt
+low: ./runs/[Final]DoorDINO_low_5class_20251202_115835/weights/best.pt
+
+# txt: /home/work/datasets/CODE/TXT/finaltest_Door.txt
