@@ -35,5 +35,6 @@ yaml/
 *.tmp
 *.bak
 *.swp
+*.yaml
 
 
