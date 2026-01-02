@@ -1,4 +1,6 @@
 """
+# 이 밖의 자세한 사용법은 USAGE.md 파일을 참조하세요.
+
 python tsne_dino.py \
   --project BoltDINO \
   --data-yaml yaml/BoltDINO.yaml \
