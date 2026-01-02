@@ -1,0 +1,23 @@
+# ============================================
+# 볼트 실시간 검사 설정
+# ============================================
+
+mode: bolt
+
+# YOLO 모델 경로 (학습된 best.pt 파일 경로)
+yolo_model: ./산학결과/[Final]Bolt_20251201_111615_tune/iter/weights/best.pt
+
+# DINOv2 모델 경로 (학습된 best.pt 파일 경로)
+dino_bolt: ./산학결과/[Final]BoltDINO_4class_20251202_123616/weights/best.pt
+
+# YOLO 신뢰도 임계값
+conf_threshold: 0.25
+
+# Voting 방법 (선택, 기본값: soft)
+voting_method: soft
+
+# 사용 예시:
+# python live.py --config yaml/bolt_live.yaml --source 0
+# python live.py --config yaml/bolt_live.yaml --source 0 --obb  # OBB 모드
+# python live.py --config yaml/bolt_live.yaml --source 0 --device cpu  # CPU 사용
+

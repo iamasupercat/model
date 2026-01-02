@@ -1,18 +1,27 @@
 """
+# 이 밖의 자세한 사용법은 USAGE.md 파일을 참조하세요.
+
+# 튜닝 모드
     python yolov11_obb.py \
     --project Bolt \
-    --data-yaml yaml/Bolt.yaml \
+    --data-yaml yaml/BoltYOLO.yaml \
     --obb \
     --convert-format \
     --tune
 
     python yolov11_obb.py \
     --project Door \
-    --data-yaml yaml/Door.yaml \
+    --data-yaml yaml/DoorYOLO.yaml \
     --obb \
     --convert-format \
     --tune 
 
+# 테스트 모드
+    python yolov11_obb.py \
+    --test-best runs/Bolt_20251201_111615/weights/best.pt \
+    --test-data-yaml yaml/BoltYOLO.yaml \
+    --test-save-dir /custom/path \
+    --obb
 
 """
 
@@ -341,7 +350,6 @@ class YOLOv11Trainer:
             'save': True,
             'save_period': 10,
             'plots': True,
-            'verbose': True,
             'exist_ok': False,
         }
         

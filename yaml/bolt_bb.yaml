@@ -1,6 +1,6 @@
-train: /home/work/datasets/CODE/TXT/train_bolt_bb.txt
-val: /home/work/datasets/CODE/TXT/val_bolt_bb.txt 
-test: /home/work/datasets/CODE/TXT/test_bolt_bb.txt
+train: /home/ciw/work/datasets/CODE/TXT/train_bolt_bb.txt
+val: /home/ciw/work/datasets/CODE/TXT/val_bolt_bb.txt 
+test: /home/ciw/work/datasets/CODE/TXT/test_bolt_bb.txt
 
 num_classes: 8
 

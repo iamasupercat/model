@@ -1,0 +1,11 @@
+train: /home/ciw/work/datasets/CODE/TXT/train_Door.txt
+val: /home/ciw/work/datasets/CODE/TXT/val_Door.txt
+test: /home/ciw/work/datasets/CODE/TXT/test_Door.txt
+
+num_classes: 3
+
+# Classes
+names:
+  0: high
+  1: mid
+  2: low

@@ -1,8 +1,8 @@
 #bolt에는 모드 기능이 제공되지 않음
 
-train: /home/work/datasets/CODE/TXT/train_resnet_bolt.txt
-val: /home/work/datasets/CODE/TXT/val_resnet_bolt.txt 
-test: /home/work/datasets/CODE/TXT/test_resnet_bolt.txt
+train: /home/ciw/work/datasets/CODE/TXT/train_resnet_bolt.txt
+val: /home/ciw/work/datasets/CODE/TXT/val_resnet_bolt.txt 
+test: /home/ciw/work/datasets/CODE/TXT/test_resnet_bolt.txt
 
 parts: bolt
 preprocess: off
