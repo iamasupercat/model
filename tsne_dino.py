@@ -402,8 +402,9 @@ class DINOv2Trainer:
             #  - 4-class: 0(정측면 양품), 1(정측면 불량), 2(측면 양품), 3(측면 불량)
             if self.mode == 'simple':
                 # 2-class: good / bad
+                # 4-class 데이터를 2-class로 매핑: 0,2→0(good), 1,3→1(bad)
                 self.class_names = ['good', 'bad']
-                self.label_map = None  # TXT가 이미 0/1 형태이므로 별도 매핑 불필요
+                self.label_map = {0: 0, 1: 1, 2: 0, 3: 1}
             else:
                 # 4-class: front/side x good/bad
                 self.class_names = [
@@ -445,11 +446,14 @@ class DINOv2Trainer:
         val_labels = [parse_label(line) for line in val_data]
 
         # door/frontdoor 원천 라벨은 0~4,
-        # bolt는 mode에 따라 0~1(simple, 2-class) 또는 0~3(4-class) 범위 검사
+        # bolt는 원천 라벨이 0~3이고,
+        #   - mode=simple: 0~3을 허용한 뒤 0,2→0 / 1,3→1 로 매핑
+        #   - 그 외: 0~3(4-class) 그대로 사용
         if self.parts in ['frontdoor', 'door']:
             max_allowed = 4
         elif self.parts == 'bolt':
-            max_allowed = 1 if self.mode == 'simple' else 3
+            # simple 모드에서도 TXT에는 0~3이 들어올 수 있으므로 0~3까지 허용
+            max_allowed = 3
         else:
             max_allowed = self.num_classes - 1
 
