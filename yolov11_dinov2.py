@@ -1,4 +1,24 @@
-"""YOLOv11 + DINOv2 테스트 파이프라인"""
+"""
+
+YOLOv11 + DINOv2 테스트 파이프라인
+python yolov11_dinov2.py \
+    --config yaml/pipeline_Door.yaml \
+    --txt /home/ciw/work/datasets/CODE/TXT/test_Door.txt \
+    --mode frontdoor \
+    --voting hard \
+    --project frontdoor_test \
+    --conf 0.25
+
+python yolov11_dinov2.py \
+    --config yaml/pipeline_Bolt.yaml \
+    --txt /home/ciw/work/datasets/CODE/TXT/test_Bolt.txt \
+    --mode bolt \
+    --voting hard \
+    --project bolt_test \
+    --conf 0.25
+
+"""
+
 
 import argparse
 import torch

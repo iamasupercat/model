@@ -1,0 +1,7 @@
+# YOLO 모델
+yolo_model: runs/Door_20260107_094426/iter/weights/best.pt
+
+# DINO 모델
+high: runs/DoorDINO_high_2class_20260107_113723/weights/best.pt
+mid: runs/DoorDINO_mid_2class_20260107_143115/weights/best.pt
+low: runs/DoorDINO_low_2class_20260107_143130/weights/best.pt

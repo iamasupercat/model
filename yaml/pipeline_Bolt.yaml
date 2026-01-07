@@ -1,0 +1,5 @@
+# YOLO 모델
+yolo_model: runs/Bolt_20260107_094359/iter/weights/best.pt
+
+# DINO 모델
+bolt: runs/BoltDINO_20260107_113625/weights/best.pt

@@ -643,10 +643,11 @@ class DINOv2Trainer:
             print(f"혼동행렬 생성 중 오류: {e}")
         
         # [추가] t-SNE 시각화 (검증 데이터 기준)
-        try:
-            self._visualize_feature_space(val_loader, 'val')
-        except Exception as e:
-            print(f"t-SNE 시각화 중 오류: {e}")
+        # try:
+        #     self._visualize_feature_space(val_loader, 'val')
+        # except Exception as e:
+        #     print(f"t-SNE 시각화 중 오류: {e}")
+        self._visualize_feature_space(val_loader, 'val')
         
         print(f"\n{'='*60}")
         print(f"✅ 학습 완료!")
@@ -867,7 +868,7 @@ class DINOv2Trainer:
             print("  - t-SNE (3D) 계산 중... (시간이 걸릴 수 있습니다)")
             tsne = TSNE(n_components=3, # ◀◀◀ 3D로 변경
                         random_state=42, 
-                        perplexity=perplexity, n_iter=1000, 
+                        perplexity=perplexity, 
                         init='pca', learning_rate='auto')
             tsne_results = tsne.fit_transform(all_features)
             
@@ -912,7 +913,7 @@ class DINOv2Trainer:
             # [참고] 기존 2D static 이미지도 함께 저장 (선택적)
             try:
                 print("  - 2D t-SNE (static) 이미지 생성 중...")
-                tsne_2d = TSNE(n_components=2, random_state=42, perplexity=perplexity, n_iter=1000, init='pca', learning_rate='auto')
+                tsne_2d = TSNE(n_components=2, random_state=42, perplexity=perplexity, init='pca', learning_rate='auto')
                 tsne_results_2d = tsne_2d.fit_transform(all_features)
                 
                 plt.figure(figsize=(12, 10))
