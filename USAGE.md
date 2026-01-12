@@ -140,12 +140,14 @@ python yolov11_obb.py \
 python yolov11_obb.py \
     --test-best runs/Bolt_YYYYMMDD_HHMMSS/weights/best.pt \
     --test-data-yaml yaml/BoltYOLO.yaml \
+    --convert-format \
     --obb
 
 # 또는 txt 파일 직접 지정
 python yolov11_obb.py \
     --test-best runs/Bolt_YYYYMMDD_HHMMSS/weights/best.pt \
     --test-txt /home/ciw/work/datasets/CODE/TXT/test_Bolt.txt \
+    --convert-format \
     --obb
 ```
 

@@ -18,9 +18,9 @@
 
 # 테스트 모드
     python yolov11_obb.py \
-    --test-best runs/Bolt_20251201_111615/weights/best.pt \
+    --test-best runs/Bolt_20260111_140947/weights/best.pt \
     --test-data-yaml yaml/BoltYOLO.yaml \
-    --test-save-dir /custom/path \
+    --convert-format \
     --obb
 
 """
@@ -181,9 +181,22 @@ class YOLOv11Trainer:
         restored_count = 0
         for original_path, backup_path in iterator:
             try:
-                if backup_path.exists():
-                    shutil.move(backup_path, original_path)
-                    restored_count += 1
+                # Path 객체로 변환
+                backup_path_obj = Path(backup_path) if not isinstance(backup_path, Path) else backup_path
+                original_path_obj = Path(original_path) if not isinstance(original_path, Path) else original_path
+                
+                # .bak 파일 존재 여부 확인
+                if not backup_path_obj.exists():
+                    print(f"⚠️  .bak 파일이 없습니다: {backup_path_obj}")
+                    continue
+                
+                # 원본 파일이 이미 존재하면 먼저 삭제
+                if original_path_obj.exists():
+                    original_path_obj.unlink()
+                
+                # .bak 파일을 원본으로 이동
+                shutil.move(str(backup_path_obj), str(original_path_obj))
+                restored_count += 1
             except Exception as e:
                 print(f"❌ 복원 실패: {backup_path} -> {original_path}. 오류: {e}")
                 

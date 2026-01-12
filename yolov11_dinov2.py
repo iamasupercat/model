@@ -1,20 +1,22 @@
 """
-
 YOLOv11 + DINOv2 테스트 파이프라인
+
 python yolov11_dinov2.py \
     --config yaml/pipeline_Door.yaml \
     --txt /home/ciw/work/datasets/CODE/TXT/test_Door.txt \
     --mode frontdoor \
-    --voting hard \
-    --project frontdoor_test \
+    --voting soft \
+    --project TestDoor_soft \
+    --obb \
     --conf 0.25
 
 python yolov11_dinov2.py \
     --config yaml/pipeline_Bolt.yaml \
     --txt /home/ciw/work/datasets/CODE/TXT/test_Bolt.txt \
     --mode bolt \
-    --voting hard \
-    --project bolt_test \
+    --voting soft \
+    --project TestBolt_soft \
+    --obb \
     --conf 0.25
 
 """
@@ -576,10 +578,18 @@ class YOLODINOPipeline:
                 }
             
             # YOLO 검출
+            predict_params = {
+                'conf': self.conf_threshold,
+                'verbose': False
+            }
+            
+            # OBB 모드인 경우 task 파라미터 추가
+            if self.use_obb:
+                predict_params['task'] = 'obb'
+            
             yolo_results = self.yolo_model.predict(
-                img_path, 
-                conf=self.conf_threshold,
-                verbose=False
+                img_path,
+                **predict_params
             )[0]
             
             if self.use_obb:
@@ -627,6 +637,20 @@ class YOLODINOPipeline:
                 # 일반 bbox 모드
                 boxes = yolo_results.boxes
                 
+                # boxes가 None인 경우 처리
+                if boxes is None or len(boxes) == 0:
+                    if self.mode == 'frontdoor':
+                        self._save_visualization(
+                            img, img_path, [], vis_dir, idx, 
+                            'no_detection', gt_label, None, None
+                        )
+                    return {
+                        'image_path': img_path,
+                        'status': 'no_detection',
+                        'message': 'YOLO 모델이 아무것도 검출하지 못했습니다.',
+                        'gt_label': gt_label
+                    }
+                
                 if self.mode == 'frontdoor':
                     result = self._process_frontdoor(
                         img, img_path, boxes, crops_dir, vis_dir, idx, gt_label
@@ -651,6 +675,19 @@ class YOLODINOPipeline:
     
     def _process_frontdoor(self, img, img_path, boxes, crops_dir, vis_dir, idx, gt_label):
         """프론트도어 처리"""
+        # boxes가 None이거나 비어있는 경우 처리
+        if boxes is None or len(boxes) == 0:
+            self._save_visualization(
+                img, img_path, [], vis_dir, idx, 
+                'no_detection', gt_label, None, None
+            )
+            return {
+                'image_path': img_path,
+                'status': 'no_detection',
+                'message': 'YOLO 모델이 아무것도 검출하지 못했습니다.',
+                'gt_label': gt_label
+            }
+        
         # 클래스별 검출 결과 정리
         detections = {'high': [], 'mid': [], 'low': []}
         
@@ -762,6 +799,19 @@ class YOLODINOPipeline:
     
     def _process_bolt(self, img, img_path, boxes, crops_dir, vis_dir, idx, gt_label):
         """볼트 처리"""
+        # boxes가 None이거나 비어있는 경우 처리
+        if boxes is None or len(boxes) == 0:
+            self._save_visualization(
+                img, img_path, [], vis_dir, idx, 
+                'no_detection', gt_label, None, None
+            )
+            return {
+                'image_path': img_path,
+                'status': 'no_detection',
+                'message': 'YOLO 모델이 아무것도 검출하지 못했습니다.',
+                'gt_label': gt_label
+            }
+        
         # 클래스별 검출 결과 정리
         bolt_detections = []  # 0, 1번 클래스 (볼트)
         frame_detections = []  # 2~7번 클래스 (프레임)
@@ -899,8 +949,8 @@ class YOLODINOPipeline:
         # 클래스별 검출 결과 정리
         detections = {'high': [], 'mid': [], 'low': []}
         
-        # 빈 OBB 처리
-        if len(obbs) == 0:
+        # 빈 OBB 또는 None 처리
+        if obbs is None or len(obbs) == 0:
             self._save_visualization_obb(
                 img, img_path, [], vis_dir, idx, 
                 'skipped', gt_label, None, None
@@ -1063,8 +1113,8 @@ class YOLODINOPipeline:
         bolt_detections = []  # 0, 1번 클래스 (볼트)
         frame_detections = []  # 2~7번 클래스 (프레임)
         
-        # 빈 OBB 처리
-        if len(obbs) == 0:
+        # 빈 OBB 또는 None 처리
+        if obbs is None or len(obbs) == 0:
             self._save_visualization_obb(
                 img, img_path, [], vis_dir, idx, 
                 'skipped', gt_label, None
@@ -1867,14 +1917,54 @@ class YOLODINOPipeline:
 
 def parse_args():
     parser = argparse.ArgumentParser(description="YOLO + DINOv2 테스트 파이프라인")
-    parser.add_argument("--config", required=True, type=str, help="모델 경로들이 들어있는 YAML 파일 경로")
-    parser.add_argument("--txt", required=True, type=str, help="처리할 이미지 경로 목록이 담긴 txt 파일 경로")
-    parser.add_argument("--mode", required=True, choices=["frontdoor", "door", "bolt"], help="실행 모드 (door는 frontdoor의 별칭)")
-    parser.add_argument("--voting", default="hard", choices=["soft", "hard"], help="보팅 방식 (기본값: hard)")
-    parser.add_argument("--project", default="pipeline_test", type=str, help="runs 하위 결과 폴더명 prefix")
-    parser.add_argument("--conf", default=0.25, type=float, help="YOLO 신뢰도 임계값")
-    parser.add_argument("--device", default="cuda", type=str, help="디바이스 (cuda|cpu)")
-    parser.add_argument("--obb", action="store_true", help="OBB(Oriented Bounding Box) 모드 사용")
+    parser.add_argument(
+        "--config",
+        required=True,
+        type=str,
+        help="모델 경로들이 들어있는 YAML 파일 경로",
+    )
+    parser.add_argument(
+        "--txt",
+        required=True,
+        default=None,
+        type=str,
+        help="처리할 이미지 경로 목록이 담긴 txt 파일 경로",
+    )
+    parser.add_argument(
+        "--mode",
+        required=True,
+        choices=["frontdoor", "door", "bolt"],
+        help="실행 모드 (door는 frontdoor의 별칭)",
+    )
+    parser.add_argument(
+        "--voting",
+        default="hard",
+        choices=["soft", "hard"],
+        help="보팅 방식 (기본값: hard)",
+    )
+    parser.add_argument(
+        "--project",
+        default="pipeline_test",
+        type=str,
+        help="runs 하위 결과 폴더명 prefix",
+    )
+    parser.add_argument(
+        "--conf",
+        default=0.25,
+        type=float,
+        help="YOLO 신뢰도 임계값",
+    )
+    parser.add_argument(
+        "--device",
+        default="cuda",
+        type=str,
+        help="디바이스 (cuda|cpu)",
+    )
+    parser.add_argument(
+        "--obb",
+        action="store_true",
+        help="OBB(Oriented Bounding Box) 모드 사용",
+    )
     return parser.parse_args()
 
 
